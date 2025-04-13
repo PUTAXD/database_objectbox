@@ -311,5 +311,115 @@ gambar
 event_add.dart
 gambar
 
+# Many To Many #
 
+Pada project ini kurang lebih mirip dengan One To Many, namun bedanya dimana relasi entitas Task dengan Owner menjadi many to many. Berikut adalah modelnya : 
 
+```dart
+@Entity()
+class Task {
+  @Id()
+  int id;
+  String text;
+
+  bool status;
+
+  Task(this.text, {this.id = 0, this.status = false});
+
+  // Here, the To-One relation on the base application is replaced by To-Many.
+  // https://docs.objectbox.io/relations#to-many-relations
+  final owner = ToMany<Owner>();
+
+  final event = ToOne<Event>();
+
+  bool setFinished() {
+    status = !status;
+    return status;
+  }
+}
+
+@Entity()
+class Owner {
+  @Id()
+  int id;
+
+  String name;
+
+  // Relationships can be accessed in the reverse direction via Backlinks()
+  @Backlink()
+  final tasks = ToMany<Task>();
+
+  Owner(this.name, {this.id = 0});
+}
+
+@Entity()
+class Event {
+  @Id()
+  int id;
+
+  String name;
+
+  @Property(type: PropertyType.date)
+  DateTime? date;
+
+  String? location;
+
+  Event(this.name, {this.id = 0, this.date, this.location});
+
+  @Backlink('event')
+  final tasks = ToMany<Task>();
+}
+
+```
+
+### 1. **Task**
+Entitas **Task** mewakili sebuah tugas atau pekerjaan yang harus dilakukan.
+
+#### Field:
+- **`id`** (`int`): Merupakan primary key dan diatur otomatis oleh ObjectBox. Nilai defaultnya adalah 0.
+- **`text`** (`String`): Menyimpan deskripsi dari tugas.
+- **`status`** (`bool`): Menyimpan status tugas, apakah selesai (`true`) atau belum selesai (`false`).
+- **`owner`** (`ToMany<Owner>`): Relasi *to-many* ke entitas **Owner**. Artinya, satu tugas dapat memiliki banyak pemilik.
+- **`event`** (`ToOne<Event>`): Relasi *to-one* ke entitas **Event**. Artinya, satu tugas hanya terkait dengan satu acara.
+
+#### Fungsi:
+- **`setFinished()`**: Fungsi untuk mengubah status tugas. Jika tugas selesai, maka statusnya akan berganti menjadi sebaliknya (misalnya, dari `false` menjadi `true`).
+
+### 2. **Owner**
+Entitas **Owner** mewakili pemilik tugas yang dapat memiliki beberapa tugas.
+
+#### Field:
+- **`id`** (`int`): Merupakan primary key dan diatur otomatis oleh ObjectBox. Nilai defaultnya adalah 0.
+- **`name`** (`String`): Menyimpan nama pemilik.
+- **`tasks`** (`ToMany<Task>`): Relasi *to-many* ke entitas **Task**. Artinya, satu pemilik dapat memiliki banyak tugas. Relasi ini dapat diakses secara terbalik melalui *backlink*.
+
+### 3. **Event**
+Entitas **Event** mewakili acara yang terkait dengan banyak tugas.
+
+#### Field:
+- **`id`** (`int`): Merupakan primary key dan diatur otomatis oleh ObjectBox. Nilai defaultnya adalah 0.
+- **`name`** (`String`): Menyimpan nama acara.
+- **`date`** (`DateTime?`): Menyimpan tanggal acara.
+- **`location`** (`String?`): Menyimpan lokasi acara.
+- **`tasks`** (`ToMany<Task>`): Relasi *to-many* ke entitas **Task**. Artinya, satu acara dapat memiliki banyak tugas yang terkait. Relasi ini dapat diakses secara terbalik melalui *backlink* dengan `@Backlink('event')`.
+
+## Relasi Antar Entitas
+
+Model ini menggunakan **relasi antar entitas** untuk menggambarkan hubungan antara **Task**, **Owner**, dan **Event**. Berikut adalah detail relasi yang ada:
+
+### Relasi di **Task**:
+1. **Relasi To-Many ke Owner**: 
+   - Setiap tugas (`Task`) dapat memiliki banyak pemilik (`Owner`). Relasi ini dinyatakan dengan field `owner` yang bertipe `ToMany<Owner>`. 
+   
+2. **Relasi To-One ke Event**:
+   - Setiap tugas (`Task`) hanya terkait dengan satu acara (`Event`). Relasi ini dinyatakan dengan field `event` yang bertipe `ToOne<Event>`.
+
+### Relasi di **Owner**:
+1. **Relasi To-Many ke Task** (Backlink):
+   - Setiap pemilik (`Owner`) dapat memiliki banyak tugas (`Task`). Relasi ini dapat diakses dengan field `tasks`, yang bertipe `ToMany<Task>`. 
+   - Relasi ini diakses secara terbalik melalui **`@Backlink()`** di kelas `Owner`.
+
+### Relasi di **Event**:
+1. **Relasi To-Many ke Task** (Backlink):
+   - Setiap acara (`Event`) dapat memiliki banyak tugas (`Task`) yang terkait. Relasi ini dapat diakses dengan field `tasks`, yang bertipe `ToMany<Task>`.
+   - Relasi ini diakses secara terbalik melalui **`@Backlink('event')`** di kelas `Event`.
