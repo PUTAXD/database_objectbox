@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'model.dart';
 import 'objectbox.g.dart';
 
-/// Provides access to the ObjectBox Store throughout the app.
-///
-/// Create this in the apps main function.
 class ObjectBox {
   late final Store store;
 
@@ -23,9 +20,9 @@ class ObjectBox {
 
   void _putDemoData() {
     Owner owner1 = Owner('Eren');
-    Owner owner2 = Owner('Annie');
+    Owner owner2 = Owner('Mikasa');
 
-    Task task1 = Task("This is Annie's Task");
+    Task task1 = Task("This is Mikasa's Task");
     task1.owner.target = owner1;
 
     Task task2 = Task("This is Eren's Task");

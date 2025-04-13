@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: TaskList(),
+      body: const TaskList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.of(context)
