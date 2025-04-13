@@ -313,10 +313,16 @@ Konstruktor `Event(this.name, {this.id = 0, this.date, this.location})` memungki
 Semua komponen mirip dengan one_to_one, disini kita bisa menambahkan Event dengan metode yang sama pada Task sebelumnya.
 
 event_list.dart
-gambar
+
+![event_list](https://github.com/PUTAXD/database_objectbox/blob/main/asset_objectbox/one_many_event_list.png)
+
+
 
 event_add.dart
-gambar
+
+![event_add](https://github.com/PUTAXD/database_objectbox/blob/main/asset_objectbox/one_to_many_add_event.png)
+
+
 
 # Many To Many #
 
@@ -430,3 +436,9 @@ Model ini menggunakan **relasi antar entitas** untuk menggambarkan hubungan anta
 1. **Relasi To-Many ke Task** (Backlink):
    - Setiap acara (`Event`) dapat memiliki banyak tugas (`Task`) yang terkait. Relasi ini dapat diakses dengan field `tasks`, yang bertipe `ToMany<Task>`.
    - Relasi ini diakses secara terbalik melalui **`@Backlink('event')`** di kelas `Event`.
+
+
+Setelah pembuatan model ini kita melakukan beberapa modifikasi pada fitur UI dimana pada saat pemilihan Owner pada sebuah task bisa dipilih lebih dari satu.
+
+![event_add](https://github.com/PUTAXD/database_objectbox/blob/main/asset_objectbox/many_many_owners_to_task.png)
+
