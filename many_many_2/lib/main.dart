@@ -1,14 +1,18 @@
 import 'dart:async';
-import 'components/authorListPage.dart';
+
 import 'package:flutter/material.dart';
+import 'components/event_add.dart';
+import 'components/event_list_view.dart';
 import 'objectbox.dart';
 
 /// Provides access to the ObjectBox Store throughout the app.
+late ObjectBox objectbox;
 Future<void> main() async {
   // This is required so ObjectBox can get the application directory
   // to store the database in.
   WidgetsFlutterBinding.ensureInitialized();
-  await initObjectBox();
+
+  objectbox = await ObjectBox.create();
 
   runApp(const MyApp());
 }
@@ -24,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AuthorListPage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -47,11 +51,16 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Column(
-          children: const [],
+          children: const [
+            Expanded(child: EventList()),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const AddEvent()));
+          },
           child: const Text("+", style: TextStyle(fontSize: 29))),
     );
   }

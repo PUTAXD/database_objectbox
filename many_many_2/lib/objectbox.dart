@@ -1,50 +1,102 @@
-// objectbox.dart
-
-export 'package:objectbox/objectbox.dart';
+import 'package:flutter/material.dart';
+import 'model.dart';
 import 'objectbox.g.dart';
 
-// Impor model yang Anda gunakan. Contoh: Todo dan model many-to-many (Author & Book)
-import 'model.dart';
+/// Provides access to the ObjectBox Store throughout the app.
+///
+/// Create this in the apps main function.
+class ObjectBox {
+  late final Store store;
 
-/// Variabel global untuk menyimpan instance Store ObjectBox.
-late final Store objectBoxStore;
+  late final Box<Task> taskBox;
+  late final Box<Owner> ownerBox;
+  late final Box<Event> eventBox;
 
-/// Fungsi untuk menginisiasi ObjectBox.
-/// Pastikan Anda menjalankan fungsi ini sebelum aplikasi menggunakan database,
-/// misalnya di dalam main() sebelum runApp().
-Future<void> initObjectBox() async {
-  // Membuka store yang secara otomatis memanfaatkan file binding objectbox.g.dart.
-  objectBoxStore = await openStore();
+  late final Stream<Query<Event>> eventsStream;
 
-  _putDemoData();
-}
+  ObjectBox._create(this.store) {
+    taskBox = Box<Task>(store);
+    ownerBox = Box<Owner>(store);
+    eventBox = Box<Event>(store);
 
-void _putDemoData() {
-  // Mengakses box untuk Author dan Book.
-  final authorBox = objectBoxStore.box<Author>();
-  final bookBox = objectBoxStore.box<Book>();
+    // Prepare a Query for all tasks and events.
+    // https://docs.objectbox.io/queries
+    final qBuilderEvents = eventBox.query()..order(Event_.date);
+    eventsStream = qBuilderEvents.watch(triggerImmediately: true);
 
-  // Cek apakah database masih kosong dengan memeriksa box Author.
-  if (authorBox.getAll().isEmpty) {
-    // Membuat beberapa instance Book.
-    final book1 = Book(title: 'The Flutter Journey');
-    final book2 = Book(title: 'Mastering Dart');
-    final book3 = Book(title: 'ObjectBox in Action');
+    if (eventBox.isEmpty()) {
+      _putDemoData();
+    }
+  }
 
-    // Membuat instance Author pertama dan menambahkan beberapa buku.
-    final author1 = Author(name: 'John Doe');
-    author1.books.addAll([book1, book2]);
+  /// Create an instance of ObjectBox to use throughout the app.
+  static Future<ObjectBox> create() async {
+    // Future<Store> openStore() {...} is defined in the generated objectbox.g.dart
+    final store = await openStore();
+    return ObjectBox._create(store);
+  }
 
-    // Membuat instance Author kedua dengan berbagi salah satu buku untuk relasi many-to-many.
-    final author2 = Author(name: 'Jane Smith');
-    author2.books.addAll([book2, book3]);
+  void _putDemoData() {
+    Event event = Event("One Direction Concert",
+        date: DateTime.now(), location: "Miami, Florida");
 
-    // Menyimpan data Author (dan secara otomatis juga menyimpan Book terkait melalui relasi).
-    authorBox.put(author1);
-    authorBox.put(author2);
+    Owner owner1 = Owner('Roger');
+    Owner owner2 = Owner('Eren');
+    Owner owner3 = Owner('John');
 
-    print('Demo data berhasil ditambahkan ke database.');
-  } else {
-    print('Database sudah memiliki data, demo data tidak ditambahkan.');
+    Task task1 = Task('This is a shared task.');
+    task1.owner.addAll([owner1, owner2, owner3]); //set the relation
+
+    Task task2 = Task('This is Eren\'s task.');
+    task2.owner.add(owner2);
+
+    event.tasks.addAll([task1, task2]);
+
+    // Task and Owner objects will also be put along with Event.
+    // ToOne and ToMany will put new Objects when the source object is put.
+    // If the target objects already existed, then only the relation is mapped.
+    eventBox.put(event);
+  }
+
+  void addTask(String taskText, List<Owner> owners, Event event) {
+    Task newTask = Task(taskText);
+
+    newTask.owner.addAll(owners);
+
+    Event updatedEvent = event;
+    updatedEvent.tasks.add(newTask);
+
+    int eventId = eventBox.put(updatedEvent);
+
+    debugPrint(
+        "Added Task: ${newTask.text} assigned to ${newTask.owner.map((owner) => owner.name).join(", ")} in event: ${eventBox.get(eventId)?.name}");
+  }
+
+  void addEvent(String name, DateTime date, String location) {
+    Event newEvent = Event(name, date: date, location: location);
+
+    eventBox.put(newEvent);
+    debugPrint("Added Event: ${newEvent.name}");
+  }
+
+  int addOwner(String newOwner) {
+    Owner ownerToAdd = Owner(newOwner);
+    int newObjectId = ownerBox.put(ownerToAdd);
+
+    return newObjectId;
+  }
+
+  Stream<List<Event>> getEvents() {
+    // Query for all events ordered by date.
+    // https://docs.objectbox.io/queries
+    final builder = eventBox.query()..order(Event_.date);
+
+    return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
+  Stream<List<Task>> getTasksOfEvent(int eventId) {
+    final builder = taskBox.query()..order(Task_.id, flags: Order.descending);
+    builder.link(Task_.event, Event_.id.equals(eventId));
+    return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 }

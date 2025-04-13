@@ -4,74 +4,101 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "4:3177421360787110936",
-      "lastPropertyId": "2:1500264102220613556",
-      "name": "Author",
+      "id": "1:3381747796728220507",
+      "lastPropertyId": "4:4920123070826450488",
+      "name": "Event",
       "properties": [
         {
-          "id": "1:407764125906066049",
+          "id": "1:7709421869102031974",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:1500264102220613556",
+          "id": "2:8067796492552408655",
           "name": "name",
           "type": 9
-        }
-      ],
-      "relations": [
-        {
-          "id": "2:6295126663816057328",
-          "name": "books",
-          "targetId": "5:7774953929481424392"
-        }
-      ]
-    },
-    {
-      "id": "5:7774953929481424392",
-      "lastPropertyId": "2:8435059430430294212",
-      "name": "Book",
-      "properties": [
-        {
-          "id": "1:4319578013514954694",
-          "name": "id",
-          "type": 6,
-          "flags": 1
         },
         {
-          "id": "2:8435059430430294212",
-          "name": "title",
+          "id": "3:3955979154529619865",
+          "name": "date",
+          "type": 10
+        },
+        {
+          "id": "4:4920123070826450488",
+          "name": "location",
           "type": 9
         }
       ],
       "relations": []
+    },
+    {
+      "id": "2:623646986822324082",
+      "lastPropertyId": "2:403281848334679014",
+      "name": "Owner",
+      "properties": [
+        {
+          "id": "1:5077350209314406947",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:403281848334679014",
+          "name": "name",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:8085257960348555831",
+      "lastPropertyId": "4:5568958378956175777",
+      "name": "Task",
+      "properties": [
+        {
+          "id": "1:5044693393643969344",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3148930984345521812",
+          "name": "text",
+          "type": 9
+        },
+        {
+          "id": "3:4205813018151760972",
+          "name": "status",
+          "type": 1
+        },
+        {
+          "id": "4:5568958378956175777",
+          "name": "eventId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:7870134188562425503",
+          "relationTarget": "Event"
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:7788834360439378994",
+          "name": "owner",
+          "targetId": "2:623646986822324082"
+        }
+      ]
     }
   ],
-  "lastEntityId": "5:7774953929481424392",
-  "lastIndexId": "1:613058545714532593",
-  "lastRelationId": "2:6295126663816057328",
+  "lastEntityId": "3:8085257960348555831",
+  "lastIndexId": "1:7870134188562425503",
+  "lastRelationId": "1:7788834360439378994",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [
-    6352640660728936468,
-    3574828563876299317,
-    7096350372053755225
-  ],
+  "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [
-    9081018432638668832,
-    8221274557664046442,
-    6647221055119307477,
-    8272593001349432039,
-    6438892843788730293,
-    7652370731081122565,
-    91899501539240372,
-    7353113701977276445,
-    7957455773314801493,
-    3008947728597098696
-  ],
+  "retiredPropertyUids": [],
   "retiredRelationUids": [],
   "version": 1
 }
