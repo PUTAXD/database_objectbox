@@ -113,6 +113,9 @@ void addTask(String taskText, Owner owner) {
 
 Setelah itu kita membuat fitur yang lebih interaktif untuk user didalam komponent UI-nya. 
 
+![task_add](https://github.com/PUTAXD/database_objectbox/blob/main/asset_objectbox/one_one_add_task.png)
+
+
 a. Widget Tambah Task (task_add.dart)
 Widget AddTask memungkinkan pengguna untuk menambahkan task baru dan mengassign owner. Fitur yang terdapat di widget ini antara lain:
 
@@ -123,6 +126,10 @@ Widget AddTask memungkinkan pengguna untuk menambahkan task baru dan mengassign 
 - Dialog untuk menambahkan owner baru jika belum tersedia.
 
 Tombol Save yang memanggil fungsi addTask() pada ObjectBox dan kembali ke halaman utama.
+
+
+
+![task_list](https://github.com/PUTAXD/database_objectbox/blob/main/asset_objectbox/one_one_list_task.png)
 
 b. Widget Tampilan Task (task_card.dart)
 Widget TaskCard digunakan untuk menampilkan setiap task dalam sebuah card. Pada card ini, pengguna dapat:
